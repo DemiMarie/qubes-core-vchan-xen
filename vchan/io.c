@@ -92,6 +92,28 @@ void libvchan_set_blocking(libvchan_t *ctrl, bool blocking) {
     ctrl->xenvchan->blocking = blocking;
 }
 
+int libvchan_discard(libvchan_t *ctrl, size_t size, bool zeroize) {
+    char buf[256];
+    size_t remaining = size = (size > INT_MAX ? INT_MAX : size);
+    int rc = -1;
+    while (remaining > 0) {
+        bool done = remaining <= sizeof buf;
+        size_t to_read = done ? remaining : sizeof buf;
+        int res = libxenvchan_read(ctrl->xenvchan, buf, to_read);
+        if (res < 0 && size <= remaining)
+            break;
+        if (done || res < 1) {
+            rc = (int)(size - remaining);
+            break;
+        }
+        remaining -= (size_t)res;
+    }
+    // data on the stack might be sensitive, zero it if requested
+    if (zeroize)
+        explicit_bzero(buf, sizeof buf);
+    return rc;
+}
+
 int libvchan_recv(libvchan_t *ctrl, void *data, size_t size) {
     if (!ctrl->xenvchan) {
         errno = EAGAIN;

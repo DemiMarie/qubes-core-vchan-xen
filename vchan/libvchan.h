@@ -76,5 +76,6 @@ int libvchan_buffer_space(libvchan_t *ctrl);
  * libvchan_client_init_async_finish() instead.
  */
 void libvchan_set_blocking(libvchan_t *ctrl, bool blocking);
+int libvchan_discard(libvchan_t *ctrl, size_t size, bool zeroize);
 
 #endif /* LIBVCHAN_H */
