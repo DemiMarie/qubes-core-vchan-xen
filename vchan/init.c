@@ -47,6 +47,18 @@ static domid_t parse_domid(const char *ptr) {
 libvchan_t *libvchan_server_init(int domain, int port, size_t read_min, size_t write_min) {
     libvchan_t *ctrl;
 
+    if (domain < 0 || (unsigned)domain >= DOMID_FIRST_RESERVED) {
+        fprintf(stderr, "Invalid peer domain ID %d\n", domain);
+        errno = -EINVAL;
+        return NULL;
+    }
+
+    if (port < 0) {
+        fprintf(stderr, "Invalid port %d\n", port);
+        errno = -EINVAL;
+        return NULL;
+    }
+
     ctrl = calloc(sizeof(*ctrl), 1);
     if (!ctrl)
         return NULL;

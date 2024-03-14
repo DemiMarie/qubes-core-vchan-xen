@@ -66,6 +66,11 @@ int libvchan_write(libvchan_t *ctrl, const void *data, size_t size) {
         errno = EAGAIN;
         return -1;
     }
+#if SIZE_MAX > INT_MAX
+    if (size > (size_t)INT_MAX) {
+        size = (size_t)INT_MAX;
+    }
+#endif
     return libxenvchan_write(ctrl->xenvchan, (char*)data, size);
 }
 
@@ -74,6 +79,12 @@ int libvchan_send(libvchan_t *ctrl, const void *data, size_t size) {
         errno = EAGAIN;
         return -1;
     }
+#if SIZE_MAX > INT_MAX
+    if (size > (size_t)INT_MAX) {
+        errno = ERANGE;
+        return -1;
+    }
+#endif
     return libxenvchan_send(ctrl->xenvchan, (char*)data, size);
 }
 
