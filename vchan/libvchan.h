@@ -75,6 +75,7 @@ libvchan_t *libvchan_client_init(int domain, int port);
  * If connection attempt failed or should be aborted, call libvchan_close() to
  * clean up.
  */
+__attribute__((access(write_only, 3, 1)))
 libvchan_t *libvchan_client_init_async(int domain, int port, EVTCHN *watch_fd);
 int libvchan_client_init_async_finish(libvchan_t *ctrl, bool blocking);
 
@@ -93,6 +94,7 @@ int libvchan_client_init_async_finish(libvchan_t *ctrl, bool blocking);
  * \return The number of bytes written on success, or a negative number on error.
  * The number of bytes written might be less than \ref size.
  */
+__attribute__((access(read_only, 2, 3)))
 int libvchan_write(libvchan_t *ctrl, const void *data, size_t size);
 
 /**
@@ -110,6 +112,7 @@ int libvchan_write(libvchan_t *ctrl, const void *data, size_t size);
  * \return size on success, 0 if the vchan is in
  *         non-blocking mode and there is not enough buffer space, or -1 on error.
  */
+__attribute__((access(read_only, 2, 3)))
 int libvchan_send(libvchan_t *ctrl, const void *data, size_t size);
 
 /**
@@ -127,6 +130,7 @@ int libvchan_send(libvchan_t *ctrl, const void *data, size_t size);
  * \return The number of bytes written on success, or a negative number on error.
  * The number of bytes written might be less than \ref size, and could even be 0.
  */
+__attribute__((access(write_only, 2, 3)))
 int libvchan_read(libvchan_t *ctrl, void *data, size_t size);
 
 /**
@@ -144,6 +148,7 @@ int libvchan_read(libvchan_t *ctrl, void *data, size_t size);
  * \return size on success, 0 if the vchan is in
  *         non-blocking mode and there is not enough buffer space, or -1 on error.
  */
+__attribute__((access(write_only, 2, 3)))
 int libvchan_recv(libvchan_t *ctrl, void *data, size_t size);
 
 /**
